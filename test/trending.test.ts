@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-import { parseGitHubNumber, parseTrendingRepositories } from "../src/trending.js";
+import { parseGitHubNumber, parseTrendingRepositories, TRENDING_URL } from "../src/trending.js";
 
 const fixtureUrl = new URL("./fixtures/trending.html", import.meta.url);
 
@@ -11,7 +11,13 @@ describe("parseGitHubNumber", () => {
     expect(parseGitHubNumber("1,234")).toBe(1234);
     expect(parseGitHubNumber("2.3k")).toBe(2300);
     expect(parseGitHubNumber("1.5m")).toBe(1500000);
-    expect(parseGitHubNumber("1.2k stars today")).toBe(1200);
+    expect(parseGitHubNumber("1.2k stars this week")).toBe(1200);
+  });
+});
+
+describe("TRENDING_URL", () => {
+  it("Weekly の Trending URL を使う", () => {
+    expect(TRENDING_URL).toBe("https://github.com/trending?since=weekly");
   });
 });
 
@@ -27,12 +33,12 @@ describe("parseTrendingRepositories", () => {
       url: "https://github.com/owner-one/repo-one",
       description: "First repository description.",
       language: "TypeScript",
-      starsToday: 45,
+      starsThisWeek: 45,
       totalStars: 1234,
       topics: [],
       readme: "",
     });
-    expect(repositories[1]?.starsToday).toBe(1200);
+    expect(repositories[1]?.starsThisWeek).toBe(1200);
     expect(repositories[1]?.totalStars).toBe(2300);
   });
 });

@@ -10,7 +10,7 @@ function createRepository(index: number): Repository {
     url: `https://github.com/owner-${index}/repo-${index}`,
     description: `Repository ${index}`,
     language: "TypeScript",
-    starsToday: index,
+    starsThisWeek: index,
     totalStars: index * 100,
     topics: [],
     readme: "",
@@ -22,7 +22,7 @@ function createSummary(index: number, body = "短い概要"): RepositorySummary 
     repository: createRepository(index),
     summary: `## owner-${index}/repo-${index}
 
-⭐ ${index}
+⭐ 今週: ${index}
 
 ${body}
 
@@ -32,11 +32,7 @@ ${body}
 
 ### こんな人向け
 
-* 開発者
-
-### 一言まとめ
-
-実用的なOSS`,
+* 開発者`,
   };
 }
 
@@ -47,8 +43,12 @@ describe("splitDiscordMessages", () => {
     );
 
     expect(messages).toHaveLength(3);
-    expect(messages[0]).toContain("# GitHub Trending Daily");
+    expect(messages[0]).toContain("# GitHub Trending Weekly");
     expect(messages[0]).toContain("## 1. owner-1/repo-1");
+    expect(messages[0]).toContain("⭐ 今週: 1");
+    expect(messages[0]).toContain("⭐ Total: 100");
+    expect(messages[0]).toContain("https://github.com/owner-1/repo-1");
+    expect(messages[0]).not.toContain("一言まとめ");
     expect(messages[0]).toContain("## 3. owner-3/repo-3");
     expect(messages[1]).toContain("## 4. owner-4/repo-4");
     expect(messages[1]).toContain("## 6. owner-6/repo-6");
@@ -63,6 +63,19 @@ describe("splitDiscordMessages", () => {
     expect(messages).toHaveLength(2);
     expect(messages.every((message) => message.length <= 2000)).toBe(true);
     expect(messages[0]).toContain("## 1. owner-1/repo-1");
+    expect(messages[0]).toContain("https://github.com/owner-1/repo-1");
     expect(messages[1]).toContain("## 2. owner-2/repo-2");
+    expect(messages[1]).toContain("https://github.com/owner-2/repo-2");
+  });
+
+  it("長すぎる要約を切り詰めても GitHub URL を残す", () => {
+    const veryLongBody = "長い説明".repeat(700);
+    const messages = splitDiscordMessages([createSummary(1, veryLongBody)]);
+
+    expect(messages).toHaveLength(1);
+    expect(messages[0]?.length).toBeLessThanOrEqual(2000);
+    expect(messages[0]).toContain("...");
+    expect(messages[0]).toContain("GitHub:");
+    expect(messages[0]).toContain("https://github.com/owner-1/repo-1");
   });
 });

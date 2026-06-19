@@ -1,15 +1,15 @@
-name: GitHub Trending Daily
+name: GitHub Trending Weekly
 
 on:
   schedule:
-    - cron: "0 23 * * *"
+    - cron: "0 23 * * 0"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  daily:
+  weekly:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -41,7 +41,7 @@ jobs:
       - name: Install Copilot CLI
         run: npm install -g @github/copilot
 
-      - name: Run daily summary
+      - name: Run weekly summary
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           COPILOT_GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

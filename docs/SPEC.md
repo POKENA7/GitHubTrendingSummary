@@ -1,8 +1,8 @@
-# GitHub Trending Daily 仕様書
+# GitHub Trending Weekly 仕様書
 
 ## 概要
 
-GitHub Trendingの上位10リポジトリを毎日取得し、日本語で要約してDiscordへ通知する個人向けサービス。
+GitHub Trendingの上位10リポジトリを毎週取得し、日本語で要約してDiscordへ通知する個人向けサービス。
 
 対象ユーザーは開発者本人のみとし、運用コストを最小限に抑えることを目的とする。
 
@@ -64,16 +64,16 @@ Discord Webhook通知
 
 # 実行スケジュール
 
-毎日1回
+毎週1回、月曜日に実行する。
 
 ```yaml
-cron: "0 23 * * *"
+cron: "0 23 * * 0"
 ```
 
 JST換算
 
 ```text
-08:00
+月曜日 08:00
 ```
 
 に通知する。
@@ -82,7 +82,7 @@ JST換算
 
 # 取得対象
 
-GitHub Trending Daily
+GitHub Trending Weekly
 
 上位10件
 
@@ -97,7 +97,7 @@ type Repository = {
   description: string;
   language: string;
 
-  starsToday: number;
+  starsThisWeek: number;
   totalStars: number;
 
   topics: string[];
@@ -135,7 +135,7 @@ Copilotへ以下の情報を渡す。
 - Description
 - Topics
 - Language
-- 今日のスター数
+- 今週のスター数
 - README先頭3000文字
 
 ---
@@ -150,7 +150,6 @@ Copilotへ以下の情報を渡す。
 
 - 何がすごい？は箇条書き3個以内
 - こんな人向けは箇条書き3個以内
-- 一言まとめは40文字以内
 - 日本語で簡潔に
 - 誇張表現は禁止
 
@@ -166,7 +165,7 @@ Copilotへ以下の情報を渡す。
 
 ## {repository_name}
 
-⭐ {stars_today}
+⭐ 今週: {stars_this_week}
 
 {概要}
 
@@ -181,20 +180,17 @@ Copilotへ以下の情報を渡す。
 - xxx
 - xxx
 
-### 一言まとめ
-
-xxx
-
 ---
 
 # Discord通知フォーマット
 
 ```md
-# GitHub Trending Daily
+# GitHub Trending Weekly
 
-## 1. awesome-agent
+## 1. owner/awesome-agent
 
-⭐ 2,300
+⭐ 今週: 2,300
+⭐ Total: 56,789
 
 AI Agentを作るためのフレームワーク。
 
@@ -209,9 +205,8 @@ AI Agentを作るためのフレームワーク。
 - AI Agent開発者
 - LangChain利用者
 
-### 一言まとめ
-
-2026年版LangChain候補。
+GitHub:
+https://github.com/owner/awesome-agent
 
 ---
 
@@ -312,23 +307,10 @@ Copilotに
 
 ---
 
-## URL追加
-
-各リポジトリ末尾に
-
-```md
-GitHub:
-https://github.com/owner/repository
-```
-
-を追加する。
-
----
-
 # MVP完了条件
 
-- GitHub Actionsで毎朝実行できる
-- Trending上位10件を取得できる
+- GitHub Actionsで毎週月曜日の朝に実行できる
+- Trending Weekly上位10件を取得できる
 - Copilotで日本語要約できる
-- Discordへ通知できる
+- Discordへ今週のスター数、総スター数、URL付きで通知できる
 - 月額費用0円で運用できる

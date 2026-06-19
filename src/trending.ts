@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 
 import type { Repository } from "./types.js";
 
-export const TRENDING_URL = "https://github.com/trending?since=daily";
+export const TRENDING_URL = "https://github.com/trending?since=weekly";
 export const MAX_TRENDING_REPOSITORIES = 10;
 
 type Fetch = typeof fetch;
@@ -65,8 +65,8 @@ export function parseTrendingRepositories(html: string): Repository[] {
     const totalStars = parseGitHubNumber(
       article.find(`a[href="/${owner}/${name}/stargazers"]`).first().text(),
     );
-    const starsToday = parseGitHubNumber(
-      article.text().match(/[\d,.kmKM]+\s+stars?\s+today/)?.[0] ?? "",
+    const starsThisWeek = parseGitHubNumber(
+      article.text().match(/[\d,.kmKM]+\s+stars?\s+this\s+week/)?.[0] ?? "",
     );
 
     repositories.push({
@@ -75,7 +75,7 @@ export function parseTrendingRepositories(html: string): Repository[] {
       url: `https://github.com/${owner}/${name}`,
       description,
       language,
-      starsToday,
+      starsThisWeek,
       totalStars,
       topics: [],
       readme: "",

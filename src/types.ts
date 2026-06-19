@@ -4,7 +4,7 @@ export type Repository = {
   url: string;
   description: string;
   language: string;
-  starsToday: number;
+  starsThisWeek: number;
   totalStars: number;
   topics: string[];
   readme: string;

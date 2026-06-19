@@ -9,7 +9,7 @@ const repository: Repository = {
   url: "https://github.com/owner/repo",
   description: "description",
   language: "TypeScript",
-  starsToday: 1,
+  starsThisWeek: 1,
   totalStars: 100,
   topics: [],
   readme: "",
