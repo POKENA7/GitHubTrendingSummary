@@ -5,9 +5,12 @@ import type { Repository } from "./types.js";
 
 const execFileAsync = promisify(execFile);
 
-export type CopilotRunner = (prompt: string) => Promise<string>;
+const CLAUDE_MODEL = "sonnet";
+const DISALLOWED_TOOLS = "Bash,Edit,Write,WebFetch,WebSearch";
 
-export function buildCopilotPrompt(repository: Repository): string {
+export type SummaryRunner = (prompt: string) => Promise<string>;
+
+export function buildSummaryPrompt(repository: Repository): string {
   const repositoryData = {
     repositoryName: `${repository.owner}/${repository.name}`,
     description: repository.description,
@@ -61,21 +64,34 @@ ${JSON.stringify(repositoryData, null, 2)}
 * xxx`;
 }
 
-export async function runCopilot(prompt: string): Promise<string> {
-  const { stdout } = await execFileAsync("copilot", ["-p", prompt, "--no-ask-user"], {
-    env: process.env,
-    maxBuffer: 1024 * 1024,
-  });
+export async function runClaude(prompt: string): Promise<string> {
+  const { stdout } = await execFileAsync(
+    "claude",
+    [
+      "-p",
+      prompt,
+      "--output-format",
+      "text",
+      "--model",
+      CLAUDE_MODEL,
+      "--disallowed-tools",
+      DISALLOWED_TOOLS,
+    ],
+    {
+      env: process.env,
+      maxBuffer: 1024 * 1024,
+    },
+  );
 
   return stdout.trim();
 }
 
 export async function summarizeRepository(
   repository: Repository,
-  runner: CopilotRunner = runCopilot,
+  runner: SummaryRunner = runClaude,
 ): Promise<string | null> {
   try {
-    const summary = await runner(buildCopilotPrompt(repository));
+    const summary = await runner(buildSummaryPrompt(repository));
     return summary.length > 0 ? summary : null;
   } catch {
     return null;

@@ -23,7 +23,7 @@ README取得
 
     ↓
 
-GitHub Copilot CLI
+Claude Code CLI
 
     ↓
 
@@ -48,7 +48,15 @@ Discord Webhook通知
 
 ## AI
 
-- GitHub Copilot CLI
+- Claude Code CLI
+
+実行方法
+
+```text
+claude -p <prompt> --output-format text --model sonnet
+```
+
+認証は `CLAUDE_CODE_OAUTH_TOKEN` を GitHub Actions の Secrets から渡す。
 
 ## 通知
 
@@ -122,14 +130,14 @@ README全文は取得しない。
 
 理由
 
-- Copilotの入力を小さくする
+- Claudeの入力を小さくする
 - Actions実行時間を短縮する
 
 ---
 
 # AI要約ルール
 
-Copilotへ以下の情報を渡す。
+Claudeへ以下の情報を渡す。
 
 - リポジトリ名
 - Description
@@ -140,7 +148,7 @@ Copilotへ以下の情報を渡す。
 
 ---
 
-## Copilotプロンプト
+## 要約プロンプト
 
 あなたはOSSリサーチャーです。
 
@@ -267,7 +275,7 @@ Descriptionのみで要約する。
 
 ---
 
-## Copilot要約失敗
+## Claude要約失敗
 
 対象リポジトリをスキップする。
 
@@ -296,7 +304,7 @@ interests:
 
 ## スコアリング
 
-Copilotに
+プロンプトに
 
 ```text
 興味との関連度を
@@ -311,6 +319,6 @@ Copilotに
 
 - GitHub Actionsで毎週月曜日の朝に実行できる
 - Trending Weekly上位10件を取得できる
-- Copilotで日本語要約できる
+- Claude Code CLIで日本語要約できる
 - Discordへ今週のスター数、総スター数、URL付きで通知できる
 - 月額費用0円で運用できる
